@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/habit_repository.dart';
 import '../../data/models/habit_log_model.dart';
+import '../../services/notification_service.dart';
 import 'habit_event.dart';
 import 'habit_state.dart';
 
@@ -22,9 +23,9 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
     try {
       final habits = await repository.getHabits();
       final logs = await repository.getAllLogs();
-      
+
       final Map<int, List<HabitLog>> habitLogs = {};
-      
+
       for (var log in logs) {
         if (!habitLogs.containsKey(log.habitId)) {
           habitLogs[log.habitId] = [];
@@ -40,8 +41,15 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
 
   Future<void> _onAddHabit(AddHabit event, Emitter<HabitState> emit) async {
     try {
-      await repository.insertHabit(event.habit);
-      add(LoadHabits()); // Reload
+      final newId = await repository.insertHabit(event.habit);
+      if (event.habit.reminderEnabled && event.habit.reminderTime != null) {
+        await NotificationService().scheduleHabitReminder(
+          habitId: newId,
+          habitName: event.habit.name,
+          reminderTime: event.habit.reminderTime!,
+        );
+      }
+      add(LoadHabits());
     } catch (e) {
       emit(HabitError("Failed to add habit: ${e.toString()}"));
     }
@@ -50,6 +58,17 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
   Future<void> _onUpdateHabit(UpdateHabit event, Emitter<HabitState> emit) async {
     try {
       await repository.updateHabit(event.habit);
+      if (event.habit.id != null) {
+        if (event.habit.reminderEnabled && event.habit.reminderTime != null) {
+          await NotificationService().scheduleHabitReminder(
+            habitId: event.habit.id!,
+            habitName: event.habit.name,
+            reminderTime: event.habit.reminderTime!,
+          );
+        } else {
+          await NotificationService().cancelHabitReminder(event.habit.id!);
+        }
+      }
       add(LoadHabits());
     } catch (e) {
       emit(HabitError("Failed to update habit: ${e.toString()}"));
@@ -59,6 +78,7 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
   Future<void> _onDeleteHabit(DeleteHabit event, Emitter<HabitState> emit) async {
     try {
       await repository.deleteHabit(event.id);
+      await NotificationService().cancelHabitReminder(event.id);
       add(LoadHabits());
     } catch (e) {
       emit(HabitError("Failed to delete habit: ${e.toString()}"));
@@ -68,6 +88,9 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
   Future<void> _onArchiveHabit(ArchiveHabit event, Emitter<HabitState> emit) async {
     try {
       await repository.archiveHabit(event.id, event.archive);
+      if (event.archive) {
+        await NotificationService().cancelHabitReminder(event.id);
+      }
       add(LoadHabits());
     } catch (e) {
       emit(HabitError("Failed to archive habit: ${e.toString()}"));
@@ -82,7 +105,7 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
       emit(HabitError("Failed to log completion: ${e.toString()}"));
     }
   }
-  
+
   Future<void> _onUndoHabitCompletion(UndoHabitCompletion event, Emitter<HabitState> emit) async {
     try {
       await repository.deleteLogByDate(event.habitId, event.date);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:habit_streak_tracker/presentation/widgets/habit_card.dart';
-import 'package:habit_streak_tracker/data/models/habit_model.dart';
+import 'package:habityne/presentation/widgets/habit_card.dart';
+import 'package:habityne/data/models/habit_model.dart';
 
 void main() {
   final testHabit = Habit(
@@ -35,7 +35,7 @@ void main() {
     expect(find.text('Description'), findsOneWidget);
   });
 
-  testWidgets('HabitCard triggers onComplete when checkbox is tapped', (WidgetTester tester) async {
+  testWidgets('HabitCard triggers onComplete when circle icon is tapped', (WidgetTester tester) async {
     bool completed = false;
     await tester.pumpWidget(
       MaterialApp(
@@ -53,8 +53,8 @@ void main() {
       ),
     );
 
-    // Find the checkbox and tap it
-    await tester.tap(find.byType(Checkbox));
+    // Tap the circle_outlined icon to complete the habit
+    await tester.tap(find.byIcon(Icons.circle_outlined));
     await tester.pump();
 
     expect(completed, isTrue);

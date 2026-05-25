@@ -77,9 +77,13 @@ class _AddEditHabitDialogState extends State<AddEditHabitDialog> {
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.edit),
                   ),
+                  maxLength: 100,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a name';
+                    }
+                    if (value.trim().length > 100) {
+                      return 'Name too long (max 100 characters)';
                     }
                     return null;
                   },

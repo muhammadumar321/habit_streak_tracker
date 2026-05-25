@@ -1,37 +1,31 @@
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:flutter_timezone/flutter_timezone.dart'; // Ensure this is in pubspec if not already, or use simpler approach
+import 'package:flutter_timezone/flutter_timezone.dart';
 
 class NotificationService {
+  static final NotificationService _instance = NotificationService._internal();
+  factory NotificationService() => _instance;
+  NotificationService._internal();
+
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
-    // effective initialization
     tz.initializeTimeZones();
-    // Getting local timezone might require a package like flutter_timezone
-    // For now, we will default to 'local' which tz handles if configured, 
-    // or just use UTC converted times if simpler. But requirements say "daily reminders".
-    // We'll perform a best-effort local zone setup.
     try {
-        final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
-        tz.setLocalLocation(tz.getLocation(currentTimeZone));
+      final timezoneInfo = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(timezoneInfo.identifier));
     } catch (e) {
-        // Fallback or log
-        if (kDebugMode) print('Could not get local timezone: $e');
+      if (kDebugMode) print('Could not get local timezone: $e');
     }
 
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    final InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-    );
+    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const initializationSettings = InitializationSettings(android: androidSettings);
 
     await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) async {
         if (kDebugMode) {
           print('Notification clicked: ${response.payload}');
@@ -48,11 +42,11 @@ class NotificationService {
     required int minute,
   }) async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      id,
-      title,
-      body,
-      _nextInstanceOfTime(hour, minute),
-      const NotificationDetails(
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: _nextInstanceOfTime(hour, minute),
+      notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           'daily_reminders',
           'Daily Reminders',
@@ -62,8 +56,6 @@ class NotificationService {
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
   }
@@ -77,13 +69,35 @@ class NotificationService {
     }
     return scheduledDate;
   }
-  
-  Future<void> cancelNotification(int id) async {
-    await flutterLocalNotificationsPlugin.cancel(id);
+
+  Future<void> scheduleHabitReminder({
+    required int habitId,
+    required String habitName,
+    required String reminderTime,
+  }) async {
+    final parts = reminderTime.split(':');
+    if (parts.length != 2) return;
+    final hour = int.tryParse(parts[0]);
+    final minute = int.tryParse(parts[1]);
+    if (hour == null || minute == null) return;
+
+    final notificationId = 1000 + habitId;
+
+    await scheduleDailyNotification(
+      id: notificationId,
+      title: 'Reminder: $habitName',
+      body: 'Time to complete your habit: $habitName',
+      hour: hour,
+      minute: minute,
+    );
   }
-  
+
+  Future<void> cancelHabitReminder(int habitId) async {
+    final notificationId = 1000 + habitId;
+    await flutterLocalNotificationsPlugin.cancel(id: notificationId);
+  }
+
   Future<void> cancelAll() async {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 }
-

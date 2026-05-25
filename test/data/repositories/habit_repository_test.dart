@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:habit_streak_tracker/data/repositories/habit_repository_impl.dart';
-import 'package:habit_streak_tracker/data/datasources/local/database_helper.dart';
-import 'package:habit_streak_tracker/data/models/habit_model.dart';
-import 'package:habit_streak_tracker/core/constants/database_constants.dart';
+import 'package:habityne/data/repositories/habit_repository_impl.dart';
+import 'package:habityne/data/datasources/local/database_helper.dart';
+import 'package:habityne/data/models/habit_model.dart';
+import 'package:habityne/core/constants/database_constants.dart';
 
 class MockDatabaseHelper extends Mock implements DatabaseHelper {}
 

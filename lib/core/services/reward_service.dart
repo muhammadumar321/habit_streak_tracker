@@ -19,10 +19,8 @@ class RewardService {
   
   Future<void> checkStreakUnlock(List<Habit> habits, Map<int, List<HabitLog>> logs) async {
     if (_isUnlimitedUnlocked) return;
-    
-    // Check if user has maintained a 5-day streak across their first 3 habits
+
     int habitsWith5DayStreak = 0;
-    
     for (var habit in habits) {
       final habitLogs = logs[habit.id] ?? [];
       final streak = StreakCalculator.calculateCurrentStreak(habitLogs);
@@ -30,15 +28,8 @@ class RewardService {
         habitsWith5DayStreak++;
       }
     }
-    
-    // Logic: If at least 1 habit has 5 day streak (or maybe all active ones?) 
-    // Plan says "across their first 3 habits". Let's say if ANY habit reaches 5 days for now to be generous, 
-    // or maybe "3 habits have 5 day streak".
-    // Let's go with: If 3 habits have > 5 day streak. OR if total streaks sum > 15? 
-    // "maintaining a 5-day streak across their first 3 habits" -> ambiguous. 
-    // intended: 3 habits * 5 days.
-    
-    if (habitsWith5DayStreak >= 1) { // Simplified for testing/start
+
+    if (habitsWith5DayStreak >= 3) {
        await _unlockUnlimited();
     }
   }
