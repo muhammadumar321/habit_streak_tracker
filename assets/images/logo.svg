@@ -1,0 +1,17 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle with deep navy -->
+  <circle cx="100" cy="100" r="100" fill="#0F172A"/>
+  
+  <!-- Main logo shape - abstract representation of growth/habits -->
+  <path d="M50 150 L80 100 L100 120 L130 70 L150 90" stroke="#10B981" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Small circles representing progress/steps -->
+  <circle cx="50" cy="150" r="6" fill="#10B981"/>
+  <circle cx="80" cy="100" r="6" fill="#10B981"/>
+  <circle cx="100" cy="120" r="6" fill="#8B5CF6"/>
+  <circle cx="130" cy="70" r="6" fill="#10B981"/>
+  <circle cx="150" cy="90" r="6" fill="#8B5CF6"/>
+  
+  <!-- App name text -->
+  <text x="100" y="180" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="24" font-weight="bold">Habityne</text>
+</svg>
