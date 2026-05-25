@@ -31,9 +31,9 @@ class MyApp extends StatelessWidget {
         builder: (context, state) {
           return MaterialApp(
             title: 'Habityne',
-            theme: AppTheme.darkTheme,
+            theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-            themeMode: ThemeMode.dark, // Enforce dark mode
+            themeMode: state.themeMode,
             initialRoute: showOnboarding ? '/onboarding' : '/',
             routes: {
               '/': (context) => const MainScreen(),

@@ -1,12 +1,12 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:habit_streak_tracker/blocs/habit/habit_bloc.dart';
-import 'package:habit_streak_tracker/blocs/habit/habit_event.dart';
-import 'package:habit_streak_tracker/blocs/habit/habit_state.dart';
-import 'package:habit_streak_tracker/data/repositories/habit_repository.dart';
-import 'package:habit_streak_tracker/data/models/habit_model.dart';
-import 'package:habit_streak_tracker/data/models/habit_log_model.dart';
+import 'package:habityne/blocs/habit/habit_bloc.dart';
+import 'package:habityne/blocs/habit/habit_event.dart';
+import 'package:habityne/blocs/habit/habit_state.dart';
+import 'package:habityne/data/repositories/habit_repository.dart';
+import 'package:habityne/data/models/habit_model.dart';
+import 'package:habityne/data/models/habit_log_model.dart';
 
 class MockHabitRepository extends Mock implements HabitRepository {}
 

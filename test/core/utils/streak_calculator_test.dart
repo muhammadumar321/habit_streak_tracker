@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:habit_streak_tracker/core/utils/streak_calculator.dart';
-import 'package:habit_streak_tracker/data/models/habit_log_model.dart';
-import 'package:habit_streak_tracker/core/utils/date_utils.dart';
+import 'package:habityne/core/utils/streak_calculator.dart';
+import 'package:habityne/data/models/habit_log_model.dart';
+import 'package:habityne/core/utils/date_utils.dart';
 
 void main() {
   group('StreakCalculator', () {

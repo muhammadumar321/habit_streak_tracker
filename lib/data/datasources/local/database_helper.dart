@@ -29,6 +29,7 @@ class DatabaseHelper {
       path,
       version: DatabaseConstants.databaseVersion,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
       onConfigure: _onConfigure,
     );
   }
@@ -41,6 +42,19 @@ class DatabaseHelper {
     await db.execute(DatabaseConstants.createTableHabits);
     await db.execute(DatabaseConstants.createTableHabitLogs);
     await db.execute(DatabaseConstants.createTableUserSettings);
+    await _createIndexes(db);
+  }
+
+  Future<void> _onUpgrade(mobile.Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await _createIndexes(db);
+    }
+  }
+
+  Future<void> _createIndexes(mobile.Database db) async {
+    await db.execute(DatabaseConstants.indexHabitLogsHabitId);
+    await db.execute(DatabaseConstants.indexHabitLogsDate);
+    await db.execute(DatabaseConstants.indexHabitsArchived);
   }
 
   Future<int> insert(String table, Map<String, dynamic> data, {String? conflictAlgorithm}) async {
@@ -98,21 +112,64 @@ class _WebMockDatabase {
   }
 
   Future<int> update(String table, Map<String, dynamic> data, {String? where, List<dynamic>? whereArgs}) async {
-    return 1;
+    final rows = _tables[table];
+    if (rows == null) return 0;
+    int updated = 0;
+    for (int i = 0; i < rows.length; i++) {
+      if (where != null && whereArgs != null) {
+        final col = where.replaceAll(' = ?', '');
+        if (rows[i][col]?.toString() == whereArgs.first?.toString()) {
+          rows[i] = Map<String, dynamic>.from(data);
+          updated++;
+        }
+      }
+    }
+    return updated;
   }
 
   Future<int> delete(String table, {String? where, List<dynamic>? whereArgs}) async {
-    return 1;
+    final rows = _tables[table];
+    if (rows == null) return 0;
+    int before = rows.length;
+    if (where != null && whereArgs != null) {
+      final col = where.replaceAll(' = ?', '');
+      rows.removeWhere((row) => row[col]?.toString() == whereArgs.first?.toString());
+    }
+    return before - rows.length;
   }
   
   Future<List<Map<String, dynamic>>> query(String table, {String? where, List<dynamic>? whereArgs, String? orderBy}) async {
-    return queryAll(table);
+    var rows = List<Map<String, dynamic>>.from(_tables[table] ?? []);
+    if (where != null && whereArgs != null && whereArgs.isNotEmpty) {
+      final col = where.replaceAll(' = ?', '');
+      rows = rows.where((row) => row[col]?.toString() == whereArgs.first?.toString()).toList();
+    }
+    return rows;
   }
 
   Future<List<Map<String, dynamic>>> rawQuery(String sql, [List<dynamic>? arguments]) async {
-     if (sql.contains('COUNT(*)')) {
-        return [{'COUNT(*)': 0}]; // Return 0 for count queries on web for now
-     }
-     return [];
+    if (sql.contains('COUNT(*)')) {
+      final tableMatch = RegExp(r'FROM\s+(\w+)').firstMatch(sql);
+      if (tableMatch != null) {
+        final table = tableMatch.group(1);
+        if (arguments != null && arguments.isNotEmpty && sql.contains('WHERE')) {
+          final colMatch = RegExp(r'(\w+)\s*=\s*\?').firstMatch(sql);
+          if (colMatch != null) {
+            final col = colMatch.group(1);
+            final count = (_tables[table] ?? [])
+                .where((row) => row[col]?.toString() == arguments.first?.toString())
+                .length;
+            return [{SqlTypeMapKey.count: count}];
+          }
+        }
+        return [{SqlTypeMapKey.count: _tables[table]?.length ?? 0}];
+      }
+      return [{SqlTypeMapKey.count: 0}];
+    }
+    return [];
   }
+}
+
+class SqlTypeMapKey {
+  static const String count = 'COUNT(*)';
 }

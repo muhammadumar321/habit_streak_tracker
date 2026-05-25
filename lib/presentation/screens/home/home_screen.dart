@@ -19,7 +19,7 @@ import '../../widgets/heatmap_grid.dart';
 import '../../../../core/services/reward_service.dart';
 import '../../../../core/services/ad_service.dart';
 import '../../dialogs/add_edit_habit_dialog.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -139,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 width: double.infinity,
                 height: 50,
-                child: AdWidget(ad: AdService().createBannerAd()..load()),
+                child: AdService().createBannerAdWidget(),
               ),
             ],
           ),
@@ -275,16 +275,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _toggleCompletion(Habit habit, bool isCompleted) {
     final bloc = context.read<HabitBloc>();
+    final habitId = habit.id;
+    if (habitId == null) return;
+
     if (isCompleted) {
-      bloc.add(UndoHabitCompletion(habitId: habit.id!, date: _selectedDate));
+      bloc.add(UndoHabitCompletion(habitId: habitId, date: _selectedDate));
     } else {
       final log = HabitLog(
-        habitId: habit.id!,
+        habitId: habitId,
         completedDate: _selectedDate,
         completedAt: DateTime.now(),
       );
       bloc.add(LogHabitCompletion(log: log));
-      // Trigger Ad logic
       AdService().incrementCompletionCount();
     }
   }
@@ -325,10 +327,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _archiveHabit(Habit habit) {
-    context.read<HabitBloc>().add(ArchiveHabit(id: habit.id!, archive: !habit.archived));
+    final habitId = habit.id;
+    if (habitId == null) return;
+    context.read<HabitBloc>().add(ArchiveHabit(id: habitId, archive: !habit.archived));
   }
 
   void _deleteHabit(Habit habit) {
+    final habitId = habit.id;
+    if (habitId == null) return;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -338,7 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           TextButton(
             onPressed: () {
-              context.read<HabitBloc>().add(DeleteHabit(id: habit.id!));
+              context.read<HabitBloc>().add(DeleteHabit(id: habitId));
               Navigator.pop(ctx);
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),

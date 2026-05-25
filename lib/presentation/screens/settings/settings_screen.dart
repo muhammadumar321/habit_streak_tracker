@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:habityne/services/backup_service.dart';
 import 'package:habityne/data/datasources/local/database_helper.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:habityne/core/services/ad_service.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -37,29 +37,19 @@ class SettingsScreen extends StatelessWidget {
                   title: const Text('Version'),
                   subtitle: const Text('1.0.0'),
                 ),
-                const Divider(),
+                const SizedBox(height: 8),
                 ListTile(
                   leading: const Icon(Icons.privacy_tip),
                   title: const Text('Privacy Policy'),
-                  onTap: () {
-                    // Placeholder for Privacy Policy URL
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Privacy Policy URL: https://example.com/privacy',
-                        ),
-                      ),
-                    );
-                  },
+                  onTap: () => _showPrivacyPolicy(context),
                 ),
               ],
             ),
           ),
-          // AdMob Banner
           SizedBox(
             width: double.infinity,
             height: 50,
-            child: AdWidget(ad: AdService().createBannerAd()..load()),
+            child: AdService().createBannerAdWidget(),
           ),
         ],
       ),
@@ -79,11 +69,36 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  void _showPrivacyPolicy(BuildContext context) {
+    const url = 'https://example.com/privacy';
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Privacy Policy'),
+        content: Text('URL: $url'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Clipboard.setData(const ClipboardData(text: url));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('URL copied to clipboard')),
+              );
+              Navigator.pop(ctx);
+            },
+            child: const Text('Copy URL'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _exportData(BuildContext context) async {
     try {
-      // Create service on fly or inject. Ideally inject.
-      // For quick implementation:
-      final dbHelper = DatabaseHelper(); // This singleton usage is fine
+      final dbHelper = DatabaseHelper();
       final service = BackupService(dbHelper: dbHelper);
 
       await service.exportData();
@@ -107,7 +122,7 @@ class SettingsScreen extends StatelessWidget {
       final dbHelper = DatabaseHelper();
       final service = BackupService(dbHelper: dbHelper);
 
-      await service.importData(); // This returns void but handles throwing
+      await service.importData();
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -117,8 +132,6 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
         );
-        // Trigger generic reload if possible
-        // context.read<HabitBloc>().add(LoadHabits());
       }
     } catch (e) {
       if (context.mounted) {

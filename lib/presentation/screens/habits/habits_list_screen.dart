@@ -4,6 +4,8 @@ import '../../../../blocs/habit/habit_bloc.dart';
 import '../../../../blocs/habit/habit_event.dart';
 import '../../../../blocs/habit/habit_state.dart';
 import '../../../../data/models/habit_model.dart';
+import '../../../../data/models/habit_log_model.dart';
+import '../../../../core/utils/date_utils.dart';
 import '../../widgets/habit_card.dart';
 import '../../dialogs/add_edit_habit_dialog.dart';
 
@@ -31,8 +33,8 @@ class HabitsListScreen extends StatelessWidget {
             } else if (state is HabitLoaded) {
               return TabBarView(
                 children: [
-                  _buildHabitList(context, state.habits, archived: false),
-                  _buildHabitList(context, state.habits, archived: true),
+                  _buildHabitList(context, state.habits, state.habitLogs, archived: false),
+                  _buildHabitList(context, state.habits, state.habitLogs, archived: true),
                 ],
               );
             } else if (state is HabitError) {
@@ -45,7 +47,12 @@ class HabitsListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHabitList(BuildContext context, List<Habit> habits, {required bool archived}) {
+  Widget _buildHabitList(
+    BuildContext context,
+    List<Habit> habits,
+    Map<int, List<HabitLog>> habitLogs, {
+    required bool archived,
+  }) {
     final filteredHabits = habits.where((h) => h.archived == archived).toList();
 
     if (filteredHabits.isEmpty) {
@@ -62,14 +69,30 @@ class HabitsListScreen extends StatelessWidget {
       itemCount: filteredHabits.length,
       itemBuilder: (context, index) {
         final habit = filteredHabits[index];
-        // We need logs for sparkline, but we are inside _buildHabitList which doesn't have logs passed to it in the widget signature currently.
-        // We need to update _buildHabitList signature too.
+        final logs = habitLogs[habit.id] ?? [];
+        final isCompleted = logs.any((log) =>
+            AppDateUtils.isSameDay(log.completedDate, DateTime.now()));
+
         return HabitCard(
           habit: habit,
-          isCompleted: false,
-          logs: const [], // Placeholder or pass from state
+          isCompleted: isCompleted,
+          logs: logs,
           onMobilePressed: () => _showEditHabitDialog(context, habit),
-          onComplete: () {}, 
+          onComplete: () {
+            if (habit.id != null) {
+              final bloc = context.read<HabitBloc>();
+              if (isCompleted) {
+                bloc.add(UndoHabitCompletion(habitId: habit.id!, date: AppDateUtils.startOfDay(DateTime.now())));
+              } else {
+                final log = HabitLog(
+                  habitId: habit.id!,
+                  completedDate: AppDateUtils.startOfDay(DateTime.now()),
+                  completedAt: DateTime.now(),
+                );
+                bloc.add(LogHabitCompletion(log: log));
+              }
+            }
+          },
           onEdit: () => _showEditHabitDialog(context, habit),
           onArchive: () => _archiveHabit(context, habit),
           onDelete: () => _deleteHabit(context, habit),
@@ -80,18 +103,20 @@ class HabitsListScreen extends StatelessWidget {
 
   Future<void> _showEditHabitDialog(BuildContext context, Habit habit) async {
     final updatedHabit = await showDialog<Habit>(
-      context: context, 
-      builder: (_) => AddEditHabitDialog(habit: habit)
+      context: context,
+      builder: (_) => AddEditHabitDialog(habit: habit),
     );
-    
+
     if (updatedHabit != null && context.mounted) {
-      final toUpdate = updatedHabit.copyWith(id: habit.id); 
+      final toUpdate = updatedHabit.copyWith(id: habit.id);
       context.read<HabitBloc>().add(UpdateHabit(habit: toUpdate));
     }
   }
 
   void _archiveHabit(BuildContext context, Habit habit) {
-    context.read<HabitBloc>().add(ArchiveHabit(id: habit.id!, archive: !habit.archived));
+    if (habit.id != null) {
+      context.read<HabitBloc>().add(ArchiveHabit(id: habit.id!, archive: !habit.archived));
+    }
   }
 
   void _deleteHabit(BuildContext context, Habit habit) {
@@ -104,7 +129,9 @@ class HabitsListScreen extends StatelessWidget {
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           TextButton(
             onPressed: () {
-              context.read<HabitBloc>().add(DeleteHabit(id: habit.id!));
+              if (habit.id != null) {
+                context.read<HabitBloc>().add(DeleteHabit(id: habit.id!));
+              }
               Navigator.pop(ctx);
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),

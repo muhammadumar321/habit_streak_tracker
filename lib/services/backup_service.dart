@@ -1,4 +1,3 @@
-// ignore_for_file: deprecated_member_use
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -15,8 +14,7 @@ class BackupService {
   Future<void> exportData() async {
     try {
       final db = await dbHelper.database;
-      
-      // Query all data
+
       final habits = await db.query(DatabaseConstants.tableHabits);
       final logs = await db.query(DatabaseConstants.tableHabitLogs);
       final settings = await db.query(DatabaseConstants.tableUserSettings);
@@ -30,15 +28,13 @@ class BackupService {
       };
 
       final jsonString = jsonEncode(data);
-      
-      // Save to temporary file
+
       final directory = await getTemporaryDirectory();
       final file = File('${directory.path}/habit_tracker_backup_${DateTime.now().millisecondsSinceEpoch}.json');
       await file.writeAsString(jsonString);
 
-      // Share file
       await Share.shareXFiles([XFile(file.path)], text: 'Habit Tracker Backup');
-      
+
     } catch (e) {
       throw Exception('Failed to export data: $e');
     }
@@ -53,34 +49,59 @@ class BackupService {
 
       if (result != null) {
         final file = File(result.files.single.path!);
+        if (!await file.exists()) {
+          throw Exception('Selected file does not exist');
+        }
+
         final jsonString = await file.readAsString();
+        if (jsonString.isEmpty) {
+          throw Exception('Selected file is empty');
+        }
+
         final data = jsonDecode(jsonString);
-        
-        if (data['version'] != 1) {
+        if (data is! Map) {
+          throw Exception('Invalid backup format: expected a JSON object');
+        }
+
+        final Map<String, dynamic> backup = data as Map<String, dynamic>;
+
+        if (backup['version'] != 1) {
           throw Exception('Unsupported backup version');
         }
 
+        if (!backup.containsKey('habits') || !backup.containsKey('logs') || !backup.containsKey('settings')) {
+          throw Exception('Invalid backup format: missing required sections');
+        }
+
+        final habits = backup['habits'];
+        final logs = backup['logs'];
+        final settings = backup['settings'];
+
+        if (habits is! List || logs is! List || settings is! List) {
+          throw Exception('Invalid backup format: data sections must be arrays');
+        }
+
+        final validHabits = habits.whereType<Map<String, dynamic>>().toList();
+        final validLogs = logs.whereType<Map<String, dynamic>>().toList();
+        final validSettings = settings.whereType<Map<String, dynamic>>().toList();
+
         final db = await dbHelper.database;
-        
+
         await db.transaction((txn) async {
-          // Clear existing data
           await txn.delete(DatabaseConstants.tableHabits);
           await txn.delete(DatabaseConstants.tableHabitLogs);
           await txn.delete(DatabaseConstants.tableUserSettings);
-          
-          // Insert habits
-          for (var habit in (data['habits'] as List)) {
-             await txn.insert(DatabaseConstants.tableHabits, habit);
+
+          for (final habit in validHabits) {
+            await txn.insert(DatabaseConstants.tableHabits, habit);
           }
-          
-          // Insert logs
-          for (var log in (data['logs'] as List)) {
-             await txn.insert(DatabaseConstants.tableHabitLogs, log);
+
+          for (final log in validLogs) {
+            await txn.insert(DatabaseConstants.tableHabitLogs, log);
           }
-          
-          // Insert settings
-          for (var setting in (data['settings'] as List)) {
-             await txn.insert(DatabaseConstants.tableUserSettings, setting);
+
+          for (final setting in validSettings) {
+            await txn.insert(DatabaseConstants.tableUserSettings, setting);
           }
         });
       }

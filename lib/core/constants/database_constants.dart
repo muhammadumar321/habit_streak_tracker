@@ -1,6 +1,6 @@
 class DatabaseConstants {
   static const String databaseName = 'habityne.db';
-  static const int databaseVersion = 1;
+  static const int databaseVersion = 2;
 
   // Table Names
   static const String tableHabits = 'habits';
@@ -70,4 +70,12 @@ class DatabaseConstants {
       $colValue TEXT NOT NULL
     )
   ''';
+
+  // Indexes
+  static const String indexHabitLogsHabitId =
+      'CREATE INDEX IF NOT EXISTS idx_habit_logs_habit_id ON $tableHabitLogs($colHabitId)';
+  static const String indexHabitLogsDate =
+      'CREATE INDEX IF NOT EXISTS idx_habit_logs_date ON $tableHabitLogs($colCompletedDate)';
+  static const String indexHabitsArchived =
+      'CREATE INDEX IF NOT EXISTS idx_habits_archived ON $tableHabits($colArchived)';
 }

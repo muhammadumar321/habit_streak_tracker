@@ -4,6 +4,7 @@ import '../../data/repositories/habit_repository.dart';
 import '../../data/repositories/habit_repository_impl.dart';
 import '../../blocs/habit/habit_bloc.dart';
 import '../../blocs/settings/settings_bloc.dart';
+import '../../blocs/statistics/statistics_bloc.dart';
 
 import '../../data/repositories/settings_repository.dart';
 import '../../data/repositories/settings_repository_impl.dart';

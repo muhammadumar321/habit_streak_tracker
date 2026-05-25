@@ -8,10 +8,10 @@ class AdService {
   AdService._internal();
 
   InterstitialAd? _interstitialAd;
+  BannerAd? _bannerAd;
   int _habitCompletionCount = 0;
-  static const int _interstitialFrequency = 3; // Show ad after every 3 completions
+  static const int _interstitialFrequency = 3;
 
-  // Test Ad Unit IDs (Replace with real IDs for production)
   final String _bannerAdUnitId = Platform.isAndroid
       ? 'ca-app-pub-3940256099942544/6300978111'
       : 'ca-app-pub-3940256099942544/2934735716';
@@ -23,6 +23,23 @@ class AdService {
   Future<void> init() async {
     await MobileAds.instance.initialize();
     _loadInterstitial();
+    _loadBanner();
+  }
+
+  void _loadBanner() {
+    _bannerAd?.dispose();
+    _bannerAd = BannerAd(
+      adUnitId: _bannerAdUnitId,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('BannerAd failed to load: $error');
+          ad.dispose();
+          _bannerAd = null;
+        },
+      ),
+    )..load();
   }
 
   void _loadInterstitial() {
@@ -31,20 +48,24 @@ class AdService {
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
+          _interstitialAd?.dispose();
           _interstitialAd = ad;
           _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
               ad.dispose();
-              _loadInterstitial(); // Preload the next one
+              _interstitialAd = null;
+              _loadInterstitial();
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
               ad.dispose();
+              _interstitialAd = null;
               _loadInterstitial();
             },
           );
         },
         onAdFailedToLoad: (error) {
           debugPrint('InterstitialAd failed to load: $error');
+          _interstitialAd = null;
         },
       ),
     );
@@ -59,25 +80,26 @@ class AdService {
   }
 
   void _showInterstitial() {
-    if (_interstitialAd != null) {
-      _interstitialAd!.show();
-      _interstitialAd = null; // Will be reloaded by onAdDismissedFullScreenContent
+    final ad = _interstitialAd;
+    if (ad != null) {
+      ad.show();
+      _interstitialAd = null;
     } else {
-      _loadInterstitial(); // Try to load for next time
+      _loadInterstitial();
     }
   }
 
-  BannerAd createBannerAd() {
-    return BannerAd(
-      adUnitId: _bannerAdUnitId,
-      size: AdSize.banner,
-      request: const AdRequest(),
-      listener: BannerAdListener(
-        onAdFailedToLoad: (ad, error) {
-          debugPrint('BannerAd failed to load: $error');
-          ad.dispose();
-        },
-      ),
-    );
+  AdWidget createBannerAdWidget() {
+    if (_bannerAd == null) {
+      _loadBanner();
+    }
+    return AdWidget(ad: _bannerAd!);
+  }
+
+  void dispose() {
+    _interstitialAd?.dispose();
+    _interstitialAd = null;
+    _bannerAd?.dispose();
+    _bannerAd = null;
   }
 }

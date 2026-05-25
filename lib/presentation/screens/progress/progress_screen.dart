@@ -4,7 +4,6 @@ import 'package:habityne/blocs/statistics/statistics_bloc.dart';
 import 'package:habityne/blocs/statistics/statistics_state.dart';
 import 'package:habityne/presentation/widgets/calendar_heatmap.dart';
 import 'package:habityne/presentation/widgets/progress_chart.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:habityne/core/services/ad_service.dart';
 
 class ProgressScreen extends StatelessWidget {
@@ -100,7 +99,7 @@ class ProgressScreen extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             height: 50,
-            child: AdWidget(ad: AdService().createBannerAd()..load()),
+            child: AdService().createBannerAdWidget(),
           ),
         ],
       ),
