@@ -8,7 +8,6 @@ class AdService {
   AdService._internal();
 
   InterstitialAd? _interstitialAd;
-  BannerAd? _bannerAd;
   int _habitCompletionCount = 0;
   static const int _interstitialFrequency = 3;
 
@@ -23,22 +22,21 @@ class AdService {
   Future<void> init() async {
     await MobileAds.instance.initialize();
     _loadInterstitial();
-    _loadBanner();
   }
 
-  void _loadBanner() {
-    _bannerAd?.dispose();
-    _bannerAd = BannerAd(
+  BannerAd createBannerAd({BannerAdListener? listener}) {
+    return BannerAd(
       adUnitId: _bannerAdUnitId,
       size: AdSize.banner,
       request: const AdRequest(),
-      listener: BannerAdListener(
-        onAdFailedToLoad: (ad, error) {
-          debugPrint('BannerAd failed to load: $error');
-          ad.dispose();
-          _bannerAd = null;
-        },
-      ),
+      listener:
+          listener ??
+          BannerAdListener(
+            onAdFailedToLoad: (ad, error) {
+              debugPrint('BannerAd failed to load: $error');
+              ad.dispose();
+            },
+          ),
     )..load();
   }
 
@@ -90,17 +88,8 @@ class AdService {
     }
   }
 
-  AdWidget createBannerAdWidget() {
-    if (_bannerAd == null) {
-      _loadBanner();
-    }
-    return AdWidget(ad: _bannerAd!);
-  }
-
   void dispose() {
     _interstitialAd?.dispose();
     _interstitialAd = null;
-    _bannerAd?.dispose();
-    _bannerAd = null;
   }
 }

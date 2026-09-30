@@ -5,6 +5,7 @@ All notable changes to the Habityne project will be documented in this file.
 ## [1.0.0+2] - 2026-09-30
 
 ### Fixed
+- **AdMob Banner Lifecycle**: Created `BannerAdWidget` stateful widget to isolate `BannerAd` lifecycle per screen and resolve "This AdWidget is already in the Widget tree" runtime exception.
 - **Widget Test Compilation**: Fixed `HabitCard` missing required `logs` parameter in `test/presentation/widgets/habit_card_test.dart`.
 - **Script Imports**: Corrected package import references in `scripts/test_streak_calculator.dart` from legacy `package:habit_streak_tracker` to `package:habityne`.
 - **Flutter Deprecations**:

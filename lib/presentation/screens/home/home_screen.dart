@@ -13,6 +13,7 @@ import '../../widgets/date_timeline.dart';
 import '../../widgets/animated_habit_card.dart';
 import '../../widgets/streak_badge.dart';
 import '../../widgets/motivation_banner.dart';
+import '../../widgets/banner_ad_widget.dart';
 import '../../../../core/constants/motivation_data.dart';
 import '../../widgets/heatmap_grid.dart';
 import '../../../../core/services/reward_service.dart';
@@ -136,11 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               // AdMob Banner
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: AdService().createBannerAdWidget(),
-              ),
+              const BannerAdWidget(),
             ],
           ),
         ),

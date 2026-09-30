@@ -4,7 +4,7 @@ import 'package:habityne/blocs/statistics/statistics_bloc.dart';
 import 'package:habityne/blocs/statistics/statistics_state.dart';
 import 'package:habityne/presentation/widgets/calendar_heatmap.dart';
 import 'package:habityne/presentation/widgets/progress_chart.dart';
-import 'package:habityne/core/services/ad_service.dart';
+import 'package:habityne/presentation/widgets/banner_ad_widget.dart';
 
 class ProgressScreen extends StatelessWidget {
   const ProgressScreen({super.key});
@@ -96,11 +96,7 @@ class ProgressScreen extends StatelessWidget {
             ),
           ),
           // AdMob Banner
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: AdService().createBannerAdWidget(),
-          ),
+          const BannerAdWidget(),
         ],
       ),
     );

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:habityne/services/backup_service.dart';
 import 'package:habityne/data/datasources/local/database_helper.dart';
-import 'package:habityne/core/services/ad_service.dart';
+import 'package:habityne/presentation/widgets/banner_ad_widget.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -46,11 +46,7 @@ class SettingsScreen extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: AdService().createBannerAdWidget(),
-          ),
+          const BannerAdWidget(),
         ],
       ),
     );
