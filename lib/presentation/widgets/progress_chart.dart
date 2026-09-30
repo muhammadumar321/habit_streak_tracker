@@ -16,10 +16,7 @@ class ProgressChart extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Last 7 Days',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+            Text('Last 7 Days', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 24),
             SizedBox(
               height: 200,
@@ -34,7 +31,8 @@ class ProgressChart extends StatelessWidget {
                         return BarTooltipItem(
                           '${(rod.toY * 100).toInt()}%',
                           TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface),
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
                           children: [
                             TextSpan(
                               text: '\n',
@@ -57,12 +55,14 @@ class ProgressChart extends StatelessWidget {
                           // index 0 = 6 days ago, index 6 = today
                           // data passed is list of doubles.
                           final index = value.toInt();
-                          if (index < 0 || index >= weeklyData.length)
+                          if (index < 0 || index >= weeklyData.length) {
                             return const SizedBox.shrink();
+                          }
 
                           final daysAgo = 6 - index;
-                          final date =
-                              DateTime.now().subtract(Duration(days: daysAgo));
+                          final date = DateTime.now().subtract(
+                            Duration(days: daysAgo),
+                          );
 
                           // First letter of day
                           final dayName = [
@@ -72,7 +72,7 @@ class ProgressChart extends StatelessWidget {
                             'T',
                             'F',
                             'S',
-                            'S'
+                            'S',
                           ][date.weekday - 1];
 
                           return Padding(
@@ -86,11 +86,14 @@ class ProgressChart extends StatelessWidget {
                       ),
                     ),
                     leftTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                     topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                     rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                   ),
                   gridData: const FlGridData(show: false),
                   borderData: FlBorderData(show: false),

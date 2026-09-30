@@ -24,7 +24,8 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // For gradient behind nav bar if needed, but here mostly for body
+      extendBody:
+          true, // For gradient behind nav bar if needed, but here mostly for body
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -32,8 +33,8 @@ class _MainScreenState extends State<MainScreen> {
             end: Alignment.bottomRight,
             colors: [
               Theme.of(context).colorScheme.surface,
-              Theme.of(context).colorScheme.surface.withOpacity(0.8),
-              Theme.of(context).colorScheme.primary.withOpacity(0.05),
+              Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+              Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
             ],
           ),
         ),
@@ -43,7 +44,7 @@ class _MainScreenState extends State<MainScreen> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 20,
               offset: const Offset(0, -5),
             ),

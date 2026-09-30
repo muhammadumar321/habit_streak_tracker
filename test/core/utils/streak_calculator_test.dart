@@ -21,16 +21,27 @@ void main() {
       expect(StreakCalculator.calculateCurrentStreak(logs), 1);
     });
 
-    test('calculateCurrentStreak returns 1 if completed yesterday but not today', () {
-      final logs = [
-        HabitLog(habitId: 1, completedDate: yesterday, completedAt: DateTime.now()),
-      ];
-      expect(StreakCalculator.calculateCurrentStreak(logs), 1);
-    });
+    test(
+      'calculateCurrentStreak returns 1 if completed yesterday but not today',
+      () {
+        final logs = [
+          HabitLog(
+            habitId: 1,
+            completedDate: yesterday,
+            completedAt: DateTime.now(),
+          ),
+        ];
+        expect(StreakCalculator.calculateCurrentStreak(logs), 1);
+      },
+    );
 
     test('calculateCurrentStreak returns 0 if completed two days ago', () {
       final logs = [
-        HabitLog(habitId: 1, completedDate: twoDaysAgo, completedAt: DateTime.now()),
+        HabitLog(
+          habitId: 1,
+          completedDate: twoDaysAgo,
+          completedAt: DateTime.now(),
+        ),
       ];
       expect(StreakCalculator.calculateCurrentStreak(logs), 0);
     });
@@ -38,37 +49,76 @@ void main() {
     test('calculateCurrentStreak counts continuous streak including today', () {
       final logs = [
         HabitLog(habitId: 1, completedDate: today, completedAt: DateTime.now()),
-        HabitLog(habitId: 1, completedDate: yesterday, completedAt: DateTime.now()),
-        HabitLog(habitId: 1, completedDate: twoDaysAgo, completedAt: DateTime.now()),
+        HabitLog(
+          habitId: 1,
+          completedDate: yesterday,
+          completedAt: DateTime.now(),
+        ),
+        HabitLog(
+          habitId: 1,
+          completedDate: twoDaysAgo,
+          completedAt: DateTime.now(),
+        ),
       ];
       expect(StreakCalculator.calculateCurrentStreak(logs), 3);
     });
 
-    test('calculateCurrentStreak counts continuous streak ending yesterday', () {
-      final logs = [
-        HabitLog(habitId: 1, completedDate: yesterday, completedAt: DateTime.now()),
-        HabitLog(habitId: 1, completedDate: twoDaysAgo, completedAt: DateTime.now()),
-      ];
-      expect(StreakCalculator.calculateCurrentStreak(logs), 2);
-    });
+    test(
+      'calculateCurrentStreak counts continuous streak ending yesterday',
+      () {
+        final logs = [
+          HabitLog(
+            habitId: 1,
+            completedDate: yesterday,
+            completedAt: DateTime.now(),
+          ),
+          HabitLog(
+            habitId: 1,
+            completedDate: twoDaysAgo,
+            completedAt: DateTime.now(),
+          ),
+        ];
+        expect(StreakCalculator.calculateCurrentStreak(logs), 2);
+      },
+    );
 
     test('calculateCurrentStreak breaks on missing day', () {
       final logs = [
         HabitLog(habitId: 1, completedDate: today, completedAt: DateTime.now()),
         // Missing yesterday
-        HabitLog(habitId: 1, completedDate: twoDaysAgo, completedAt: DateTime.now()),
+        HabitLog(
+          habitId: 1,
+          completedDate: twoDaysAgo,
+          completedAt: DateTime.now(),
+        ),
       ];
       expect(StreakCalculator.calculateCurrentStreak(logs), 1);
     });
-    
+
     test('calculateLongestStreak returns max streak', () {
       final logs = [
         HabitLog(habitId: 1, completedDate: today, completedAt: DateTime.now()),
-        HabitLog(habitId: 1, completedDate: yesterday, completedAt: DateTime.now()),
+        HabitLog(
+          habitId: 1,
+          completedDate: yesterday,
+          completedAt: DateTime.now(),
+        ),
         // Break
-        HabitLog(habitId: 1, completedDate: threeDaysAgo, completedAt: DateTime.now()),
-        HabitLog(habitId: 1, completedDate: threeDaysAgo.subtract(const Duration(days: 1)), completedAt: DateTime.now()),
-        HabitLog(habitId: 1, completedDate: threeDaysAgo.subtract(const Duration(days: 2)), completedAt: DateTime.now()),
+        HabitLog(
+          habitId: 1,
+          completedDate: threeDaysAgo,
+          completedAt: DateTime.now(),
+        ),
+        HabitLog(
+          habitId: 1,
+          completedDate: threeDaysAgo.subtract(const Duration(days: 1)),
+          completedAt: DateTime.now(),
+        ),
+        HabitLog(
+          habitId: 1,
+          completedDate: threeDaysAgo.subtract(const Duration(days: 2)),
+          completedAt: DateTime.now(),
+        ),
       ];
       // Current streak is 2.
       // Past streak is 3 (threeDaysAgo, -1, -2).

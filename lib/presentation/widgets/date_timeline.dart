@@ -35,29 +35,31 @@ class _DateTimelineState extends State<DateTimeline> {
       }
     });
   }
-  
+
   @override
   void didUpdateWidget(DateTimeline oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.selectedDate != widget.selectedDate) {
-       _scrollToDate(widget.selectedDate);
+      _scrollToDate(widget.selectedDate);
     }
   }
 
   void _scrollToDate(DateTime date) {
-      final today = AppDateUtils.startOfDay(DateTime.now());
-      final diff = date.difference(today.subtract(Duration(days: _daysBefore))).inDays;
-      final index = diff.clamp(0, _daysBefore + _daysAfter);
-      
-      // Center the item: (Screen Width / 2) - (Item Width / 2)
-      // For simplicity, just scroll to index * itemWidth
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          index * 68.0 - (MediaQuery.of(context).size.width / 2) + 34, 
-          duration: const Duration(milliseconds: 300), 
-          curve: Curves.easeInOut
-        );
-      }
+    final today = AppDateUtils.startOfDay(DateTime.now());
+    final diff = date
+        .difference(today.subtract(Duration(days: _daysBefore)))
+        .inDays;
+    final index = diff.clamp(0, _daysBefore + _daysAfter);
+
+    // Center the item: (Screen Width / 2) - (Item Width / 2)
+    // For simplicity, just scroll to index * itemWidth
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        index * 68.0 - (MediaQuery.of(context).size.width / 2) + 34,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
@@ -89,13 +91,26 @@ class _DateTimelineState extends State<DateTimeline> {
               width: 60,
               margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
               decoration: BoxDecoration(
-                color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(16),
-                border: isToday && !isSelected 
-                    ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2)
+                border: isToday && !isSelected
+                    ? Border.all(
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 2,
+                      )
                     : null,
-                boxShadow: isSelected 
-                    ? [BoxShadow(color: Theme.of(context).colorScheme.primary.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))] 
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ]
                     : null,
               ),
               child: Column(
@@ -113,7 +128,9 @@ class _DateTimelineState extends State<DateTimeline> {
                   Text(
                     date.day.toString(),
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Theme.of(context).textTheme.bodyLarge?.color,
+                      color: isSelected
+                          ? Colors.white
+                          : Theme.of(context).textTheme.bodyLarge?.color,
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                     ),

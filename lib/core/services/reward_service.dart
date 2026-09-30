@@ -16,8 +16,11 @@ class RewardService {
     final prefs = await SharedPreferences.getInstance();
     _isUnlimitedUnlocked = prefs.getBool('unlimited_unlocked') ?? false;
   }
-  
-  Future<void> checkStreakUnlock(List<Habit> habits, Map<int, List<HabitLog>> logs) async {
+
+  Future<void> checkStreakUnlock(
+    List<Habit> habits,
+    Map<int, List<HabitLog>> logs,
+  ) async {
     if (_isUnlimitedUnlocked) return;
 
     int habitsWith5DayStreak = 0;
@@ -30,7 +33,7 @@ class RewardService {
     }
 
     if (habitsWith5DayStreak >= 3) {
-       await _unlockUnlimited();
+      await _unlockUnlimited();
     }
   }
 

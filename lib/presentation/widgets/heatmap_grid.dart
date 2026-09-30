@@ -13,24 +13,28 @@ class HeatmapGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     // 5 weeks * 7 days = 35 days
     final today = AppDateUtils.startOfDay(DateTime.now());
-    final startDate = today.subtract(const Duration(days: 34)); // 35 days total ending today
+    final startDate = today.subtract(
+      const Duration(days: 34),
+    ); // 35 days total ending today
 
     // Calculate max completions in a single day for opacity normalization
     int maxCompletions = 0;
     Map<DateTime, int> completionsPerDay = {};
 
     for (int i = 0; i < 35; i++) {
-        final date = startDate.add(Duration(days: i));
-        int count = 0;
-        habitLogs.forEach((_, logs) {
-            if (logs.any((log) => AppDateUtils.isSameDay(log.completedDate, date))) {
-                count++;
-            }
-        });
-        completionsPerDay[date] = count;
-        if (count > maxCompletions) maxCompletions = count;
+      final date = startDate.add(Duration(days: i));
+      int count = 0;
+      habitLogs.forEach((_, logs) {
+        if (logs.any(
+          (log) => AppDateUtils.isSameDay(log.completedDate, date),
+        )) {
+          count++;
+        }
+      });
+      completionsPerDay[date] = count;
+      if (count > maxCompletions) maxCompletions = count;
     }
-    
+
     if (maxCompletions == 0) maxCompletions = 1;
 
     return GlassContainer(
@@ -39,7 +43,7 @@ class HeatmapGrid extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           Text(
+          Text(
             "ACTIVITY MAP",
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
@@ -53,11 +57,12 @@ class HeatmapGrid extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 7, // 7 days (rows if horizontal, but here cols) -> Wait.
+              crossAxisCount:
+                  7, // 7 days (rows if horizontal, but here cols) -> Wait.
               // GitHub style: Rows = Days (Mon, Tue...), Cols = Weeks.
               // GridView fills row first. So crossAxisCount = 7 means 7 columns.
               // If we want 7 columns (days of week?), no usually it's Weeks on X, Days on Y.
-              // But standard GridView is Row-major. 
+              // But standard GridView is Row-major.
               // Let's just do 7 columns = 7 days of week (Sun-Sat).
               // So 5 rows of weeks.
               mainAxisSpacing: 4,
@@ -70,10 +75,12 @@ class HeatmapGrid extends StatelessWidget {
               final date = startDate.add(Duration(days: index));
               final count = completionsPerDay[date] ?? 0;
               final opacity = (count / maxCompletions).clamp(0.1, 1.0);
-              
+
               return Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(count == 0 ? 0.05 : opacity),
+                  color: Theme.of(context).colorScheme.primary.withValues(
+                    alpha: count == 0 ? 0.05 : opacity,
+                  ),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Tooltip(
@@ -88,4 +95,3 @@ class HeatmapGrid extends StatelessWidget {
     );
   }
 }
-

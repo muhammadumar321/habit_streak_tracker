@@ -55,7 +55,10 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
     }
   }
 
-  Future<void> _onUpdateHabit(UpdateHabit event, Emitter<HabitState> emit) async {
+  Future<void> _onUpdateHabit(
+    UpdateHabit event,
+    Emitter<HabitState> emit,
+  ) async {
     try {
       await repository.updateHabit(event.habit);
       if (event.habit.id != null) {
@@ -75,7 +78,10 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
     }
   }
 
-  Future<void> _onDeleteHabit(DeleteHabit event, Emitter<HabitState> emit) async {
+  Future<void> _onDeleteHabit(
+    DeleteHabit event,
+    Emitter<HabitState> emit,
+  ) async {
     try {
       await repository.deleteHabit(event.id);
       await NotificationService().cancelHabitReminder(event.id);
@@ -85,7 +91,10 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
     }
   }
 
-  Future<void> _onArchiveHabit(ArchiveHabit event, Emitter<HabitState> emit) async {
+  Future<void> _onArchiveHabit(
+    ArchiveHabit event,
+    Emitter<HabitState> emit,
+  ) async {
     try {
       await repository.archiveHabit(event.id, event.archive);
       if (event.archive) {
@@ -97,7 +106,10 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
     }
   }
 
-  Future<void> _onLogHabitCompletion(LogHabitCompletion event, Emitter<HabitState> emit) async {
+  Future<void> _onLogHabitCompletion(
+    LogHabitCompletion event,
+    Emitter<HabitState> emit,
+  ) async {
     try {
       await repository.logCompletion(event.log);
       add(LoadHabits());
@@ -106,7 +118,10 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
     }
   }
 
-  Future<void> _onUndoHabitCompletion(UndoHabitCompletion event, Emitter<HabitState> emit) async {
+  Future<void> _onUndoHabitCompletion(
+    UndoHabitCompletion event,
+    Emitter<HabitState> emit,
+  ) async {
     try {
       await repository.deleteLogByDate(event.habitId, event.date);
       add(LoadHabits());

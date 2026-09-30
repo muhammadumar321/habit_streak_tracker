@@ -5,23 +5,19 @@ class TipCard extends StatelessWidget {
   final Tip tip;
   final VoidCallback onClose;
 
-  const TipCard({
-    super.key,
-    required this.tip,
-    required this.onClose,
-  });
+  const TipCard({super.key, required this.tip, required this.onClose});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: theme.colorScheme.tertiary.withOpacity(0.1),
+        color: theme.colorScheme.tertiary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: theme.colorScheme.tertiary.withOpacity(0.3),
+          color: theme.colorScheme.tertiary.withValues(alpha: 0.3),
         ),
       ),
       child: Stack(
@@ -33,7 +29,7 @@ class TipCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.tertiary.withOpacity(0.2),
+                    color: theme.colorScheme.tertiary.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -58,7 +54,9 @@ class TipCard extends StatelessWidget {
                       Text(
                         tip.description,
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.8),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.8,
+                          ),
                         ),
                       ),
                     ],
@@ -74,7 +72,7 @@ class TipCard extends StatelessWidget {
             child: IconButton(
               icon: const Icon(Icons.close, size: 20),
               onPressed: onClose,
-              color: theme.colorScheme.onSurface.withOpacity(0.5),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
             ),
           ),
         ],

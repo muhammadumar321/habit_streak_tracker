@@ -54,8 +54,12 @@ void main() {
     blocTest<HabitBloc, HabitState>(
       'emits [HabitLoading, HabitLoaded] when LoadHabits is successful',
       build: () {
-        when(() => mockHabitRepository.getHabits()).thenAnswer((_) async => [testHabit]);
-        when(() => mockHabitRepository.getAllLogs()).thenAnswer((_) async => [testLog]);
+        when(
+          () => mockHabitRepository.getHabits(),
+        ).thenAnswer((_) async => [testHabit]);
+        when(
+          () => mockHabitRepository.getAllLogs(),
+        ).thenAnswer((_) async => [testLog]);
         return habitBloc;
       },
       act: (bloc) => bloc.add(LoadHabits()),
@@ -63,7 +67,9 @@ void main() {
         HabitLoading(),
         HabitLoaded(
           habits: [testHabit],
-          habitLogs: {1: [testLog]},
+          habitLogs: {
+            1: [testLog],
+          },
         ),
       ],
     );
@@ -71,7 +77,9 @@ void main() {
     blocTest<HabitBloc, HabitState>(
       'emits [HabitError] when LoadHabits fails',
       build: () {
-        when(() => mockHabitRepository.getHabits()).thenThrow(Exception('Failed to load'));
+        when(
+          () => mockHabitRepository.getHabits(),
+        ).thenThrow(Exception('Failed to load'));
         return habitBloc;
       },
       act: (bloc) => bloc.add(LoadHabits()),
@@ -84,9 +92,15 @@ void main() {
     blocTest<HabitBloc, HabitState>(
       'triggers LoadHabits after successful AddHabit',
       build: () {
-        when(() => mockHabitRepository.insertHabit(any())).thenAnswer((_) async => 1);
-        when(() => mockHabitRepository.getHabits()).thenAnswer((_) async => [testHabit]);
-        when(() => mockHabitRepository.getAllLogs()).thenAnswer((_) async => []);
+        when(
+          () => mockHabitRepository.insertHabit(any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockHabitRepository.getHabits(),
+        ).thenAnswer((_) async => [testHabit]);
+        when(
+          () => mockHabitRepository.getAllLogs(),
+        ).thenAnswer((_) async => []);
         return habitBloc;
       },
       act: (bloc) => bloc.add(AddHabit(habit: testHabit)),
@@ -98,7 +112,9 @@ void main() {
     blocTest<HabitBloc, HabitState>(
       'emits [HabitError] when AddHabit fails',
       build: () {
-        when(() => mockHabitRepository.insertHabit(any())).thenThrow(Exception('Add failed'));
+        when(
+          () => mockHabitRepository.insertHabit(any()),
+        ).thenThrow(Exception('Add failed'));
         return habitBloc;
       },
       act: (bloc) => bloc.add(AddHabit(habit: testHabit)),

@@ -17,7 +17,7 @@ abstract class HabitRepository {
   Future<int> logCompletion(HabitLog log);
   Future<int> deleteLog(int id);
   Future<int> deleteLogByDate(int habitId, DateTime date);
-  
+
   // Stats helpers
   Future<int> getCompletionCount(int habitId);
 }

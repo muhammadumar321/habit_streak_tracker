@@ -17,17 +17,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     {
       'image': 'welcome',
       'title': 'Welcome to Habit Tracker',
-      'description': 'Build better habits and track your progress with streaks, reminders, and insights.',
+      'description':
+          'Build better habits and track your progress with streaks, reminders, and insights.',
     },
     {
       'image': 'track',
       'title': 'Track Daily Habits',
-      'description': 'Mark habits as complete with a single tap. Never miss a day and keep your streak alive!',
+      'description':
+          'Mark habits as complete with a single tap. Never miss a day and keep your streak alive!',
     },
     {
       'image': 'streaks',
       'title': 'Stay Motivated',
-      'description': 'Watch your streaks grow and celebrate your consistency with visual progress charts.',
+      'description':
+          'Watch your streaks grow and celebrate your consistency with visual progress charts.',
     },
   ];
 
@@ -40,7 +43,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _completeOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_complete', true);
-    
+
     if (mounted) {
       Navigator.of(context).pushReplacementNamed('/');
     }
@@ -60,7 +63,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: const Text('Skip'),
               ),
             ),
-            
+
             // PageView
             Expanded(
               child: PageView.builder(
@@ -81,7 +84,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 },
               ),
             ),
-            
+
             // Page indicators
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -100,9 +103,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Next/Get Started button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -125,7 +128,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 32),
           ],
         ),

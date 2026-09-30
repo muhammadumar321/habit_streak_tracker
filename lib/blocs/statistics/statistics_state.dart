@@ -30,13 +30,13 @@ class StatisticsLoaded extends StatisticsState {
 
   @override
   List<Object?> get props => [
-        totalHabits,
-        totalCompletions,
-        bestStreak,
-        completionRate,
-        heatmapData,
-        weeklyCompletion,
-      ];
+    totalHabits,
+    totalCompletions,
+    bestStreak,
+    completionRate,
+    heatmapData,
+    weeklyCompletion,
+  ];
 }
 
 class StatisticsError extends StatisticsState {

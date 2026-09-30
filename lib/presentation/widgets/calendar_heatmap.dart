@@ -86,10 +86,9 @@ class CalendarHeatMap extends StatelessWidget {
               if (count == 0) opacity = 0.1;
 
               final color = count > 0
-                  ? Theme.of(context)
-                      .colorScheme
-                      .primary
-                      .withValues(alpha: opacity)
+                  ? Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: opacity)
                   : Theme.of(context).colorScheme.surfaceContainerHighest;
 
               return Tooltip(

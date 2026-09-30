@@ -15,7 +15,8 @@ class Tip {
 const List<Tip> dailyTips = [
   Tip(
     title: 'Track Daily',
-    description: 'Consistency is key! Mark your habits every day to build a streak.',
+    description:
+        'Consistency is key! Mark your habits every day to build a streak.',
     icon: Icons.calendar_today,
   ),
   Tip(
@@ -25,12 +26,14 @@ const List<Tip> dailyTips = [
   ),
   Tip(
     title: 'Edit Habits',
-    description: 'Topic specific settings? Long press a habit card to edit or archive it.',
+    description:
+        'Topic specific settings? Long press a habit card to edit or archive it.',
     icon: Icons.edit,
   ),
   Tip(
     title: 'Monitor Progress',
-    description: 'Check the Progress tab to visualize your streaks and consistency.',
+    description:
+        'Check the Progress tab to visualize your streaks and consistency.',
     icon: Icons.bar_chart,
   ),
   Tip(

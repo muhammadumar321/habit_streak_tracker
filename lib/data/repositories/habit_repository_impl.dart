@@ -13,7 +13,9 @@ class HabitRepositoryImpl implements HabitRepository {
   @override
   Future<List<Habit>> getHabits() async {
     try {
-      final List<Map<String, dynamic>> maps = await databaseHelper.queryAll(DatabaseConstants.tableHabits);
+      final List<Map<String, dynamic>> maps = await databaseHelper.queryAll(
+        DatabaseConstants.tableHabits,
+      );
       return List.generate(maps.length, (i) => Habit.fromMap(maps[i]));
     } catch (e) {
       throw AppDatabaseException(e.toString());
@@ -55,7 +57,10 @@ class HabitRepositoryImpl implements HabitRepository {
   @override
   Future<int> insertHabit(Habit habit) async {
     try {
-      return await databaseHelper.insert(DatabaseConstants.tableHabits, habit.toMap());
+      return await databaseHelper.insert(
+        DatabaseConstants.tableHabits,
+        habit.toMap(),
+      );
     } catch (e) {
       throw AppDatabaseException(e.toString());
     }
@@ -124,7 +129,9 @@ class HabitRepositoryImpl implements HabitRepository {
   @override
   Future<List<HabitLog>> getAllLogs() async {
     try {
-      final List<Map<String, dynamic>> maps = await databaseHelper.queryAll(DatabaseConstants.tableHabitLogs);
+      final List<Map<String, dynamic>> maps = await databaseHelper.queryAll(
+        DatabaseConstants.tableHabitLogs,
+      );
       return List.generate(maps.length, (i) => HabitLog.fromMap(maps[i]));
     } catch (e) {
       throw AppDatabaseException(e.toString());
@@ -134,7 +141,10 @@ class HabitRepositoryImpl implements HabitRepository {
   @override
   Future<int> logCompletion(HabitLog log) async {
     try {
-      return await databaseHelper.insert(DatabaseConstants.tableHabitLogs, log.toMap());
+      return await databaseHelper.insert(
+        DatabaseConstants.tableHabitLogs,
+        log.toMap(),
+      );
     } catch (e) {
       throw AppDatabaseException(e.toString());
     }
@@ -153,7 +163,7 @@ class HabitRepositoryImpl implements HabitRepository {
       throw AppDatabaseException(e.toString());
     }
   }
-  
+
   @override
   Future<int> deleteLogByDate(int habitId, DateTime date) async {
     try {
@@ -162,7 +172,8 @@ class HabitRepositoryImpl implements HabitRepository {
       final dateStr = date.toIso8601String().split('T')[0];
       return await db.delete(
         DatabaseConstants.tableHabitLogs,
-        where: '${DatabaseConstants.colHabitId} = ? AND ${DatabaseConstants.colCompletedDate} = ?',
+        where:
+            '${DatabaseConstants.colHabitId} = ? AND ${DatabaseConstants.colCompletedDate} = ?',
         whereArgs: [habitId, dateStr],
       );
     } catch (e) {

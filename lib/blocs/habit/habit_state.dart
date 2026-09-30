@@ -4,7 +4,7 @@ import '../../data/models/habit_log_model.dart';
 
 abstract class HabitState extends Equatable {
   const HabitState();
-  
+
   @override
   List<Object?> get props => [];
 }
@@ -26,7 +26,7 @@ class HabitLoaded extends HabitState {
 class HabitOperationSuccess extends HabitState {
   final String message;
   const HabitOperationSuccess(this.message);
-  
+
   @override
   List<Object?> get props => [message];
 }

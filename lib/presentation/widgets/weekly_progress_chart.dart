@@ -12,13 +12,15 @@ class WeeklyProgressChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final today = AppDateUtils.startOfDay(DateTime.now());
-    
+
     // Calculate completion counts for the last 7 days
     final List<int> dailyCounts = List.generate(7, (index) {
       final date = today.subtract(Duration(days: 6 - index));
       int count = 0;
       habitLogs.forEach((habitId, logs) {
-        if (logs.any((log) => AppDateUtils.isSameDay(log.completedDate, date))) {
+        if (logs.any(
+          (log) => AppDateUtils.isSameDay(log.completedDate, date),
+        )) {
           count++;
         }
       });
@@ -26,7 +28,9 @@ class WeeklyProgressChart extends StatelessWidget {
     });
 
     // Find max Y for scaling
-    final maxY = (dailyCounts.reduce((curr, next) => curr > next ? curr : next) + 1).toDouble();
+    final maxY =
+        (dailyCounts.reduce((curr, next) => curr > next ? curr : next) + 1)
+            .toDouble();
 
     return Container(
       height: 200,
@@ -37,7 +41,7 @@ class WeeklyProgressChart extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -61,11 +65,13 @@ class WeeklyProgressChart extends StatelessWidget {
                 barTouchData: BarTouchData(
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
-                    tooltipBgColor: theme.colorScheme.secondary,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       return BarTooltipItem(
                         rod.toY.toInt().toString(),
-                        const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       );
                     },
                   ),
@@ -77,7 +83,9 @@ class WeeklyProgressChart extends StatelessWidget {
                       showTitles: true,
                       getTitlesWidget: (value, meta) {
                         final index = value.toInt();
-                        if (index < 0 || index >= 7) return const SizedBox.shrink();
+                        if (index < 0 || index >= 7) {
+                          return const SizedBox.shrink();
+                        }
                         final date = today.subtract(Duration(days: 6 - index));
                         return Padding(
                           padding: const EdgeInsets.only(top: 8.0),
@@ -116,11 +124,14 @@ class WeeklyProgressChart extends StatelessWidget {
                         toY: count.toDouble(),
                         color: theme.colorScheme.primary,
                         width: 14,
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(6),
+                        ),
                         backDrawRodData: BackgroundBarChartRodData(
                           show: true,
                           toY: maxY < 5 ? 5 : maxY,
-                          color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                          color: theme.colorScheme.surfaceContainerHighest
+                              .withValues(alpha: 0.3),
                         ),
                       ),
                     ],

@@ -24,20 +24,24 @@ class _AddEditHabitDialogState extends State<AddEditHabitDialog> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.habit?.name);
-    _descriptionController =
-        TextEditingController(text: widget.habit?.description);
+    _descriptionController = TextEditingController(
+      text: widget.habit?.description,
+    );
 
     if (widget.habit != null) {
       if (widget.habit!.colorHex != null) {
-        _selectedColor =
-            Color(int.parse(widget.habit!.colorHex!.replaceFirst('#', '0xff')));
+        _selectedColor = Color(
+          int.parse(widget.habit!.colorHex!.replaceFirst('#', '0xff')),
+        );
       }
       _frequency = widget.habit!.frequency;
       _reminderEnabled = widget.habit!.reminderEnabled;
       if (widget.habit!.reminderTime != null) {
         final parts = widget.habit!.reminderTime!.split(':');
-        _reminderTime =
-            TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+        _reminderTime = TimeOfDay(
+          hour: int.parse(parts[0]),
+          minute: int.parse(parts[1]),
+        );
       }
     }
   }
@@ -136,8 +140,9 @@ class _AddEditHabitDialogState extends State<AddEditHabitDialog> {
 
                 if (_reminderEnabled)
                   ListTile(
-                    title:
-                        Text(_reminderTime?.format(context) ?? 'Select Time'),
+                    title: Text(
+                      _reminderTime?.format(context) ?? 'Select Time',
+                    ),
                     leading: const Icon(Icons.access_time),
                     onTap: () async {
                       final time = await showTimePicker(
@@ -184,7 +189,7 @@ class _AddEditHabitDialogState extends State<AddEditHabitDialog> {
       Colors.purple,
       Colors.teal,
       Colors.pink,
-      Colors.indigo
+      Colors.indigo,
     ];
 
     return Wrap(
@@ -198,18 +203,20 @@ class _AddEditHabitDialogState extends State<AddEditHabitDialog> {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-                border: isSelected
-                    ? Border.all(color: Colors.black, width: 2)
-                    : null,
-                boxShadow: [
-                  if (isSelected)
-                    BoxShadow(
-                        color: color.withValues(alpha: 0.4),
-                        blurRadius: 6,
-                        spreadRadius: 2)
-                ]),
+              color: color,
+              shape: BoxShape.circle,
+              border: isSelected
+                  ? Border.all(color: Colors.black, width: 2)
+                  : null,
+              boxShadow: [
+                if (isSelected)
+                  BoxShadow(
+                    color: color.withValues(alpha: 0.4),
+                    blurRadius: 6,
+                    spreadRadius: 2,
+                  ),
+              ],
+            ),
             child: isSelected
                 ? const Icon(Icons.check, color: Colors.white, size: 20)
                 : null,

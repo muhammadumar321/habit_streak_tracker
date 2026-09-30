@@ -19,7 +19,9 @@ class HabitLog {
     return {
       DatabaseConstants.colId: id,
       DatabaseConstants.colHabitId: habitId,
-      DatabaseConstants.colCompletedDate: completedDate.toIso8601String().split('T')[0],
+      DatabaseConstants.colCompletedDate: completedDate.toIso8601String().split(
+        'T',
+      )[0],
       DatabaseConstants.colCompletedAt: completedAt?.toIso8601String(),
       DatabaseConstants.colNotes: notes,
     };
@@ -29,7 +31,9 @@ class HabitLog {
     return HabitLog(
       id: map[DatabaseConstants.colId] as int?,
       habitId: map[DatabaseConstants.colHabitId] as int,
-      completedDate: DateTime.parse(map[DatabaseConstants.colCompletedDate] as String),
+      completedDate: DateTime.parse(
+        map[DatabaseConstants.colCompletedDate] as String,
+      ),
       completedAt: map[DatabaseConstants.colCompletedAt] != null
           ? DateTime.parse(map[DatabaseConstants.colCompletedAt] as String)
           : null,

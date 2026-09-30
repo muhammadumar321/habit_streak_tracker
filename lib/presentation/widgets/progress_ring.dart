@@ -19,6 +19,7 @@ class ProgressRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final childWidget = child;
     return SizedBox(
       width: size,
       height: size,
@@ -30,7 +31,7 @@ class ProgressRing extends StatelessWidget {
             size: Size(size, size),
             painter: _RingPainter(
               progress: 1.0,
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               strokeWidth: strokeWidth,
             ),
           ),
@@ -44,7 +45,8 @@ class ProgressRing extends StatelessWidget {
               glow: true,
             ),
           ),
-          if (child != null) child!,
+          // ignore: use_null_aware_elements
+          if (childWidget != null) childWidget,
         ],
       ),
     );
@@ -68,7 +70,7 @@ class _RingPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = (size.width - strokeWidth) / 2;
-    
+
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
@@ -87,16 +89,16 @@ class _RingPainter extends CustomPainter {
       false,
       paint,
     );
-    
+
     // Draw duplicate for core sharpness if glowing
     if (glow) {
-       final corePaint = Paint()
-      ..color = color.withOpacity(0.8)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-      
-       canvas.drawArc(
+      final corePaint = Paint()
+        ..color = color.withValues(alpha: 0.8)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth
+        ..strokeCap = StrokeCap.round;
+
+      canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),
         -pi / 2,
         sweepAngle,

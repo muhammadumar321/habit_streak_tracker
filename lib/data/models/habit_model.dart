@@ -36,7 +36,9 @@ class Habit {
       DatabaseConstants.colIconName: iconName,
       DatabaseConstants.colColorHex: colorHex,
       DatabaseConstants.colFrequency: frequency,
-      DatabaseConstants.colTargetDays: targetDays != null ? jsonEncode(targetDays) : null,
+      DatabaseConstants.colTargetDays: targetDays != null
+          ? jsonEncode(targetDays)
+          : null,
       DatabaseConstants.colReminderTime: reminderTime,
       DatabaseConstants.colReminderEnabled: reminderEnabled ? 1 : 0,
       DatabaseConstants.colCreatedAt: createdAt.toIso8601String(),

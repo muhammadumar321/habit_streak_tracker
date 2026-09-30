@@ -29,24 +29,30 @@ void main() {
   group('HabitRepositoryImpl', () {
     test('getHabits returns list of habits from database', () async {
       final habitMap = testHabit.toMap();
-      when(() => mockDatabaseHelper.queryAll(DatabaseConstants.tableHabits))
-          .thenAnswer((_) async => [habitMap]);
+      when(
+        () => mockDatabaseHelper.queryAll(DatabaseConstants.tableHabits),
+      ).thenAnswer((_) async => [habitMap]);
 
       final result = await repository.getHabits();
 
       expect(result.length, 1);
       expect(result.first.name, testHabit.name);
-      verify(() => mockDatabaseHelper.queryAll(DatabaseConstants.tableHabits)).called(1);
+      verify(
+        () => mockDatabaseHelper.queryAll(DatabaseConstants.tableHabits),
+      ).called(1);
     });
 
     test('insertHabit calls databaseHelper.insert', () async {
-      when(() => mockDatabaseHelper.insert(any(), any()))
-          .thenAnswer((_) async => 1);
+      when(
+        () => mockDatabaseHelper.insert(any(), any()),
+      ).thenAnswer((_) async => 1);
 
       final result = await repository.insertHabit(testHabit);
 
       expect(result, 1);
-      verify(() => mockDatabaseHelper.insert(DatabaseConstants.tableHabits, any())).called(1);
+      verify(
+        () => mockDatabaseHelper.insert(DatabaseConstants.tableHabits, any()),
+      ).called(1);
     });
   });
 }

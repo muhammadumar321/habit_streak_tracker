@@ -10,7 +10,6 @@ import '../../../../data/models/habit_log_model.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../../core/utils/streak_calculator.dart';
 import '../../widgets/date_timeline.dart';
-import '../../widgets/habit_card.dart';
 import '../../widgets/animated_habit_card.dart';
 import '../../widgets/streak_badge.dart';
 import '../../widgets/motivation_banner.dart';
@@ -19,7 +18,6 @@ import '../../widgets/heatmap_grid.dart';
 import '../../../../core/services/reward_service.dart';
 import '../../../../core/services/ad_service.dart';
 import '../../dialogs/add_edit_habit_dialog.dart';
-
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,9 +29,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   DateTime _selectedDate = AppDateUtils.startOfDay(DateTime.now());
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
-  List<Habit> _displayHabits = [];
+  final List<Habit> _displayHabits = [];
   Map<int, List<HabitLog>> _habitLogs = {};
-  
+
   MotivationQuote? _dailyQuote;
 
   @override
@@ -81,19 +79,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 setState(() => _selectedDate = AppDateUtils.startOfDay(date));
               }
             },
-          )
+          ),
         ],
       ),
       body: Container(
         decoration: BoxDecoration(
-           gradient: RadialGradient(
-             center: const Alignment(-0.5, -0.5),
-             radius: 1.5,
-             colors: [
-               Theme.of(context).colorScheme.primary.withOpacity(0.1),
-               Theme.of(context).colorScheme.background,
-             ]
-           )
+          gradient: RadialGradient(
+            center: const Alignment(-0.5, -0.5),
+            radius: 1.5,
+            colors: [
+              Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+              Theme.of(context).colorScheme.surface,
+            ],
+          ),
         ),
         child: SafeArea(
           child: Column(
@@ -104,15 +102,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 onDateSelected: (date) => setState(() => _selectedDate = date),
               ),
               const Divider(color: Colors.white10),
-              
+
               // Motivation Banner
-              if (_dailyQuote != null)
-                MotivationBanner(quote: _dailyQuote!),
-              
+              if (_dailyQuote != null) MotivationBanner(quote: _dailyQuote!),
+
               // Heatmap Grid
-              if (_habitLogs.isNotEmpty)
-                HeatmapGrid(habitLogs: _habitLogs),
-              
+              if (_habitLogs.isNotEmpty) HeatmapGrid(habitLogs: _habitLogs),
+
               // Habits List
               Expanded(
                 child: BlocConsumer<HabitBloc, HabitState>(
@@ -120,13 +116,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (state is HabitLoaded) {
                       _updateHabitList(state.habits, state.habitLogs);
                       // Check for reward unlock
-                      RewardService().checkStreakUnlock(state.habits, state.habitLogs);
+                      RewardService().checkStreakUnlock(
+                        state.habits,
+                        state.habitLogs,
+                      );
                     }
                   },
                   builder: (context, state) {
                     if (state is HabitLoading && _displayHabits.isEmpty) {
                       return const Center(child: CircularProgressIndicator());
-                    } else if (state is HabitLoaded || (state is HabitLoading && _displayHabits.isNotEmpty)) {
+                    } else if (state is HabitLoaded ||
+                        (state is HabitLoading && _displayHabits.isNotEmpty)) {
                       return _buildHabitList();
                     } else if (state is HabitError) {
                       return Center(child: Text('Error: ${state.message}'));
@@ -152,7 +152,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _updateHabitList(List<Habit> allHabits, Map<int, List<HabitLog>> allLogs) {
+  void _updateHabitList(
+    List<Habit> allHabits,
+    Map<int, List<HabitLog>> allLogs,
+  ) {
     final newActiveHabits = allHabits.where((h) => !h.archived).toList();
     _habitLogs = allLogs;
 
@@ -178,7 +181,10 @@ class _HomeScreenState extends State<HomeScreen> {
       final habit = newActiveHabits[i];
       if (!oldHabitIds.contains(habit.id)) {
         _displayHabits.insert(i, habit);
-        _listKey.currentState?.insertItem(i, duration: const Duration(milliseconds: 300));
+        _listKey.currentState?.insertItem(
+          i,
+          duration: const Duration(milliseconds: 300),
+        );
       } else {
         // Update existing (just replace in list, handled by rebuild)
         final oldIndex = _displayHabits.indexWhere((h) => h.id == habit.id);
@@ -187,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     }
-    
+
     setState(() {});
   }
 
@@ -205,11 +211,14 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                   Icon(Icons.list_alt, size: 64, color: Colors.grey),
-                   SizedBox(height: 16),
-                   Text('No habits yet', style: TextStyle(fontSize: 18, color: Colors.grey)),
-                   SizedBox(height: 8),
-                   Text('Tap + to add a new habit'),
+                  Icon(Icons.list_alt, size: 64, color: Colors.grey),
+                  SizedBox(height: 16),
+                  Text(
+                    'No habits yet',
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                  ),
+                  SizedBox(height: 8),
+                  Text('Tap + to add a new habit'),
                 ],
               ),
             ),
@@ -236,10 +245,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildHabitItem(Habit habit, Animation<double> animation, int index) {
     final logs = _habitLogs[habit.id] ?? [];
-    
-    final isCompleted = logs.any((log) => 
-        AppDateUtils.isSameDay(log.completedDate, _selectedDate));
-        
+
+    final isCompleted = logs.any(
+      (log) => AppDateUtils.isSameDay(log.completedDate, _selectedDate),
+    );
+
     final currentStreak = StreakCalculator.calculateCurrentStreak(logs);
 
     return FadeTransition(
@@ -295,19 +305,23 @@ class _HomeScreenState extends State<HomeScreen> {
     final habitState = context.read<HabitBloc>().state;
     final isUnlimited = RewardService().isUnlimitedUnlocked;
 
-    if (!isUnlimited && habitState is HabitLoaded && habitState.habits.length >= 3) {
+    if (!isUnlimited &&
+        habitState is HabitLoaded &&
+        habitState.habits.length >= 3) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Reach a 5-day streak to unlock unlimited habits!'))
+        const SnackBar(
+          content: Text('Reach a 5-day streak to unlock unlimited habits!'),
+        ),
       );
       return;
     }
 
     final bloc = context.read<HabitBloc>();
     final habit = await showDialog<Habit>(
-      context: context, 
-      builder: (_) => const AddEditHabitDialog()
+      context: context,
+      builder: (_) => const AddEditHabitDialog(),
     );
-    
+
     if (habit == null || !mounted) return;
 
     bloc.add(AddHabit(habit: habit));
@@ -316,20 +330,22 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _showEditHabitDialog(BuildContext context, Habit habit) async {
     final bloc = context.read<HabitBloc>();
     final updatedHabit = await showDialog<Habit>(
-      context: context, 
-      builder: (_) => AddEditHabitDialog(habit: habit)
+      context: context,
+      builder: (_) => AddEditHabitDialog(habit: habit),
     );
-    
+
     if (updatedHabit == null || !mounted) return;
 
-    final toUpdate = updatedHabit.copyWith(id: habit.id); 
+    final toUpdate = updatedHabit.copyWith(id: habit.id);
     bloc.add(UpdateHabit(habit: toUpdate));
   }
 
   void _archiveHabit(Habit habit) {
     final habitId = habit.id;
     if (habitId == null) return;
-    context.read<HabitBloc>().add(ArchiveHabit(id: habitId, archive: !habit.archived));
+    context.read<HabitBloc>().add(
+      ArchiveHabit(id: habitId, archive: !habit.archived),
+    );
   }
 
   void _deleteHabit(Habit habit) {
@@ -340,9 +356,14 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Delete Habit?'),
-        content: const Text('This will delete the habit and all its history permanently.'),
+        content: const Text(
+          'This will delete the habit and all its history permanently.',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
           TextButton(
             onPressed: () {
               context.read<HabitBloc>().add(DeleteHabit(id: habitId));

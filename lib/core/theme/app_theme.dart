@@ -7,7 +7,7 @@ class AppTheme {
   static const Color _electricEmerald = Color(0xFF10B981);
   static const Color _softViolet = Color(0xFF8B5CF6);
   static const Color _surfaceDark = Color(0xFF1E293B);
-  
+
   static final darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
@@ -18,14 +18,10 @@ class AppTheme {
       secondary: _softViolet,
       surface: _surfaceDark,
       onSurface: Colors.white,
-      background: _deepNavy,
-      onBackground: Colors.white,
       tertiary: _softViolet,
     ),
-    textTheme: GoogleFonts.interTextTheme(
-      ThemeData.dark().textTheme,
-    ).apply(
-      bodyColor: Colors.white, 
+    textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme).apply(
+      bodyColor: Colors.white,
       displayColor: Colors.white,
       fontFamily: GoogleFonts.inter().fontFamily,
     ),
@@ -40,15 +36,18 @@ class AppTheme {
       ),
       iconTheme: const IconThemeData(color: Colors.white),
     ),
-    // cardTheme removed to avoid type error
     navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: _deepNavy.withOpacity(0.8),
-      indicatorColor: _electricEmerald.withOpacity(0.2),
-      labelTextStyle: MaterialStateProperty.all(
-        GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white70),
+      backgroundColor: _deepNavy.withValues(alpha: 0.8),
+      indicatorColor: _electricEmerald.withValues(alpha: 0.2),
+      labelTextStyle: WidgetStateProperty.all(
+        GoogleFonts.inter(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: Colors.white70,
+        ),
       ),
-      iconTheme: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
+      iconTheme: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
           return const IconThemeData(color: _electricEmerald);
         }
         return const IconThemeData(color: Colors.white54);
@@ -60,7 +59,7 @@ class AppTheme {
       elevation: 4,
     ),
   );
-  
+
   // We only support dark theme for StreakMaster
-  static final lightTheme = darkTheme; 
+  static final lightTheme = darkTheme;
 }

@@ -50,18 +50,19 @@ class AdService {
         onAdLoaded: (ad) {
           _interstitialAd?.dispose();
           _interstitialAd = ad;
-          _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-            onAdDismissedFullScreenContent: (ad) {
-              ad.dispose();
-              _interstitialAd = null;
-              _loadInterstitial();
-            },
-            onAdFailedToShowFullScreenContent: (ad, error) {
-              ad.dispose();
-              _interstitialAd = null;
-              _loadInterstitial();
-            },
-          );
+          _interstitialAd!.fullScreenContentCallback =
+              FullScreenContentCallback(
+                onAdDismissedFullScreenContent: (ad) {
+                  ad.dispose();
+                  _interstitialAd = null;
+                  _loadInterstitial();
+                },
+                onAdFailedToShowFullScreenContent: (ad, error) {
+                  ad.dispose();
+                  _interstitialAd = null;
+                  _loadInterstitial();
+                },
+              );
         },
         onAdFailedToLoad: (error) {
           debugPrint('InterstitialAd failed to load: $error');

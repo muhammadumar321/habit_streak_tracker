@@ -33,8 +33,18 @@ class HabitsListScreen extends StatelessWidget {
             } else if (state is HabitLoaded) {
               return TabBarView(
                 children: [
-                  _buildHabitList(context, state.habits, state.habitLogs, archived: false),
-                  _buildHabitList(context, state.habits, state.habitLogs, archived: true),
+                  _buildHabitList(
+                    context,
+                    state.habits,
+                    state.habitLogs,
+                    archived: false,
+                  ),
+                  _buildHabitList(
+                    context,
+                    state.habits,
+                    state.habitLogs,
+                    archived: true,
+                  ),
                 ],
               );
             } else if (state is HabitError) {
@@ -59,7 +69,9 @@ class HabitsListScreen extends StatelessWidget {
       return Center(
         child: Text(
           archived ? 'No archived habits' : 'No active habits',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyLarge?.copyWith(color: Colors.grey),
         ),
       );
     }
@@ -70,8 +82,9 @@ class HabitsListScreen extends StatelessWidget {
       itemBuilder: (context, index) {
         final habit = filteredHabits[index];
         final logs = habitLogs[habit.id] ?? [];
-        final isCompleted = logs.any((log) =>
-            AppDateUtils.isSameDay(log.completedDate, DateTime.now()));
+        final isCompleted = logs.any(
+          (log) => AppDateUtils.isSameDay(log.completedDate, DateTime.now()),
+        );
 
         return HabitCard(
           habit: habit,
@@ -82,7 +95,12 @@ class HabitsListScreen extends StatelessWidget {
             if (habit.id != null) {
               final bloc = context.read<HabitBloc>();
               if (isCompleted) {
-                bloc.add(UndoHabitCompletion(habitId: habit.id!, date: AppDateUtils.startOfDay(DateTime.now())));
+                bloc.add(
+                  UndoHabitCompletion(
+                    habitId: habit.id!,
+                    date: AppDateUtils.startOfDay(DateTime.now()),
+                  ),
+                );
               } else {
                 final log = HabitLog(
                   habitId: habit.id!,
@@ -115,7 +133,9 @@ class HabitsListScreen extends StatelessWidget {
 
   void _archiveHabit(BuildContext context, Habit habit) {
     if (habit.id != null) {
-      context.read<HabitBloc>().add(ArchiveHabit(id: habit.id!, archive: !habit.archived));
+      context.read<HabitBloc>().add(
+        ArchiveHabit(id: habit.id!, archive: !habit.archived),
+      );
     }
   }
 
@@ -124,9 +144,14 @@ class HabitsListScreen extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Delete Habit?'),
-        content: const Text('This will delete the habit and all its history permanently.'),
+        content: const Text(
+          'This will delete the habit and all its history permanently.',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
           TextButton(
             onPressed: () {
               if (habit.id != null) {

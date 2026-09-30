@@ -29,7 +29,7 @@ class HabitCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     // Neomorphic decoration
     final decoration = BoxDecoration(
       color: theme.cardTheme.color,
@@ -37,13 +37,13 @@ class HabitCard extends StatelessWidget {
       boxShadow: [
         // Dark shadow bottom-right
         BoxShadow(
-          color: Colors.black.withOpacity(0.5),
+          color: Colors.black.withValues(alpha: 0.5),
           offset: const Offset(4, 4),
           blurRadius: 10,
         ),
         // Light shadow top-left
         BoxShadow(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           offset: const Offset(-4, -4),
           blurRadius: 10,
         ),
@@ -57,14 +57,14 @@ class HabitCard extends StatelessWidget {
           onComplete();
           return false;
         } else {
-            _showOptions(context);
-            return false;
+          _showOptions(context);
+          return false;
         }
       },
       background: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-          color: theme.colorScheme.primary.withOpacity(0.2),
+          color: theme.colorScheme.primary.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(20),
         ),
         alignment: Alignment.centerLeft,
@@ -74,7 +74,7 @@ class HabitCard extends StatelessWidget {
       secondaryBackground: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-          color: theme.colorScheme.error.withOpacity(0.2),
+          color: theme.colorScheme.error.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(20),
         ),
         alignment: Alignment.centerRight,
@@ -100,28 +100,30 @@ class HabitCard extends StatelessWidget {
                       width: 50,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: isCompleted 
-                            ? theme.colorScheme.primary 
+                        color: isCompleted
+                            ? theme.colorScheme.primary
                             : theme.colorScheme.surface,
                         shape: BoxShape.circle,
-                        boxShadow: isCompleted 
+                        boxShadow: isCompleted
                             ? [
                                 BoxShadow(
-                                  color: theme.colorScheme.primary.withOpacity(0.4),
+                                  color: theme.colorScheme.primary.withValues(
+                                    alpha: 0.4,
+                                  ),
                                   blurRadius: 12,
-                                  offset: const Offset(0, 4)
-                                )
+                                  offset: const Offset(0, 4),
+                                ),
                               ]
                             : [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.3),
+                                  color: Colors.black.withValues(alpha: 0.3),
                                   offset: const Offset(2, 2),
-                                  blurRadius: 4
+                                  blurRadius: 4,
                                 ),
                                 BoxShadow(
-                                  color: Colors.white.withOpacity(0.05),
+                                  color: Colors.white.withValues(alpha: 0.05),
                                   offset: const Offset(-2, -2),
-                                  blurRadius: 4
+                                  blurRadius: 4,
                                 ),
                               ],
                       ),
@@ -133,7 +135,7 @@ class HabitCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  
+
                   // Content
                   Expanded(
                     child: Column(
@@ -143,7 +145,9 @@ class HabitCard extends StatelessWidget {
                           habit.name,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
-                            decoration: isCompleted ? TextDecoration.lineThrough : null,
+                            decoration: isCompleted
+                                ? TextDecoration.lineThrough
+                                : null,
                             color: isCompleted ? Colors.white54 : Colors.white,
                           ),
                         ),
@@ -152,17 +156,16 @@ class HabitCard extends StatelessWidget {
                             padding: const EdgeInsets.only(top: 4.0),
                             child: Text(
                               habit.description!,
-                              style: theme.textTheme.bodySmall?.copyWith(color: Colors.white38),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: Colors.white38,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         const SizedBox(height: 12),
                         // Sparkline Chart
-                        SizedBox(
-                          height: 30,
-                          child: _buildSparkline(context),
-                        ),
+                        SizedBox(height: 30, child: _buildSparkline(context)),
                       ],
                     ),
                   ),
@@ -180,7 +183,9 @@ class HabitCard extends StatelessWidget {
     final today = AppDateUtils.startOfDay(DateTime.now());
     final spots = List.generate(7, (index) {
       final date = today.subtract(Duration(days: 6 - index));
-      final completed = logs.any((log) => AppDateUtils.isSameDay(log.completedDate, date));
+      final completed = logs.any(
+        (log) => AppDateUtils.isSameDay(log.completedDate, date),
+      );
       return FlSpot(index.toDouble(), completed ? 1 : 0);
     });
 
@@ -203,7 +208,9 @@ class HabitCard extends StatelessWidget {
             dotData: FlDotData(show: false),
             belowBarData: BarAreaData(
               show: true,
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.1),
             ),
           ),
         ],
@@ -229,7 +236,10 @@ class HabitCard extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.archive, color: Colors.white),
-              title: Text(habit.archived ? 'Unarchive' : 'Archive', style: const TextStyle(color: Colors.white)),
+              title: Text(
+                habit.archived ? 'Unarchive' : 'Archive',
+                style: const TextStyle(color: Colors.white),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 onArchive();

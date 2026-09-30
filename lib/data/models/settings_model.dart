@@ -7,10 +7,7 @@ class UserSetting {
   UserSetting({required this.key, required this.value});
 
   Map<String, dynamic> toMap() {
-    return {
-      DatabaseConstants.colKey: key,
-      DatabaseConstants.colValue: value,
-    };
+    return {DatabaseConstants.colKey: key, DatabaseConstants.colValue: value};
   }
 
   factory UserSetting.fromMap(Map<String, dynamic> map) {

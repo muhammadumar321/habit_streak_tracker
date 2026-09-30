@@ -45,7 +45,11 @@ class DatabaseHelper {
     await _createIndexes(db);
   }
 
-  Future<void> _onUpgrade(mobile.Database db, int oldVersion, int newVersion) async {
+  Future<void> _onUpgrade(
+    mobile.Database db,
+    int oldVersion,
+    int newVersion,
+  ) async {
     if (oldVersion < 2) {
       await _createIndexes(db);
     }
@@ -57,14 +61,18 @@ class DatabaseHelper {
     await db.execute(DatabaseConstants.indexHabitsArchived);
   }
 
-  Future<int> insert(String table, Map<String, dynamic> data, {String? conflictAlgorithm}) async {
+  Future<int> insert(
+    String table,
+    Map<String, dynamic> data, {
+    String? conflictAlgorithm,
+  }) async {
     final db = await database;
     if (kIsWeb) {
       return (db as _WebMockDatabase).insert(table, data);
     }
     return await (db as mobile.Database).insert(
-      table, 
-      data, 
+      table,
+      data,
       conflictAlgorithm: _getAlgorithm(conflictAlgorithm),
     );
   }
@@ -111,7 +119,12 @@ class _WebMockDatabase {
     return List<Map<String, dynamic>>.from(_tables[table] ?? []);
   }
 
-  Future<int> update(String table, Map<String, dynamic> data, {String? where, List<dynamic>? whereArgs}) async {
+  Future<int> update(
+    String table,
+    Map<String, dynamic> data, {
+    String? where,
+    List<dynamic>? whereArgs,
+  }) async {
     final rows = _tables[table];
     if (rows == null) return 0;
     int updated = 0;
@@ -127,44 +140,70 @@ class _WebMockDatabase {
     return updated;
   }
 
-  Future<int> delete(String table, {String? where, List<dynamic>? whereArgs}) async {
+  Future<int> delete(
+    String table, {
+    String? where,
+    List<dynamic>? whereArgs,
+  }) async {
     final rows = _tables[table];
     if (rows == null) return 0;
     int before = rows.length;
     if (where != null && whereArgs != null) {
       final col = where.replaceAll(' = ?', '');
-      rows.removeWhere((row) => row[col]?.toString() == whereArgs.first?.toString());
+      rows.removeWhere(
+        (row) => row[col]?.toString() == whereArgs.first?.toString(),
+      );
     }
     return before - rows.length;
   }
-  
-  Future<List<Map<String, dynamic>>> query(String table, {String? where, List<dynamic>? whereArgs, String? orderBy}) async {
+
+  Future<List<Map<String, dynamic>>> query(
+    String table, {
+    String? where,
+    List<dynamic>? whereArgs,
+    String? orderBy,
+  }) async {
     var rows = List<Map<String, dynamic>>.from(_tables[table] ?? []);
     if (where != null && whereArgs != null && whereArgs.isNotEmpty) {
       final col = where.replaceAll(' = ?', '');
-      rows = rows.where((row) => row[col]?.toString() == whereArgs.first?.toString()).toList();
+      rows = rows
+          .where((row) => row[col]?.toString() == whereArgs.first?.toString())
+          .toList();
     }
     return rows;
   }
 
-  Future<List<Map<String, dynamic>>> rawQuery(String sql, [List<dynamic>? arguments]) async {
+  Future<List<Map<String, dynamic>>> rawQuery(
+    String sql, [
+    List<dynamic>? arguments,
+  ]) async {
     if (sql.contains('COUNT(*)')) {
       final tableMatch = RegExp(r'FROM\s+(\w+)').firstMatch(sql);
       if (tableMatch != null) {
         final table = tableMatch.group(1);
-        if (arguments != null && arguments.isNotEmpty && sql.contains('WHERE')) {
+        if (arguments != null &&
+            arguments.isNotEmpty &&
+            sql.contains('WHERE')) {
           final colMatch = RegExp(r'(\w+)\s*=\s*\?').firstMatch(sql);
           if (colMatch != null) {
             final col = colMatch.group(1);
             final count = (_tables[table] ?? [])
-                .where((row) => row[col]?.toString() == arguments.first?.toString())
+                .where(
+                  (row) => row[col]?.toString() == arguments.first?.toString(),
+                )
                 .length;
-            return [{SqlTypeMapKey.count: count}];
+            return [
+              {SqlTypeMapKey.count: count},
+            ];
           }
         }
-        return [{SqlTypeMapKey.count: _tables[table]?.length ?? 0}];
+        return [
+          {SqlTypeMapKey.count: _tables[table]?.length ?? 0},
+        ];
       }
-      return [{SqlTypeMapKey.count: 0}];
+      return [
+        {SqlTypeMapKey.count: 0},
+      ];
     }
     return [];
   }

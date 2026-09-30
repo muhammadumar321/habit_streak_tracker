@@ -30,11 +30,13 @@ class BackupService {
       final jsonString = jsonEncode(data);
 
       final directory = await getTemporaryDirectory();
-      final file = File('${directory.path}/habit_tracker_backup_${DateTime.now().millisecondsSinceEpoch}.json');
+      final file = File(
+        '${directory.path}/habit_tracker_backup_${DateTime.now().millisecondsSinceEpoch}.json',
+      );
       await file.writeAsString(jsonString);
 
+      // ignore: deprecated_member_use
       await Share.shareXFiles([XFile(file.path)], text: 'Habit Tracker Backup');
-
     } catch (e) {
       throw Exception('Failed to export data: $e');
     }
@@ -69,7 +71,9 @@ class BackupService {
           throw Exception('Unsupported backup version');
         }
 
-        if (!backup.containsKey('habits') || !backup.containsKey('logs') || !backup.containsKey('settings')) {
+        if (!backup.containsKey('habits') ||
+            !backup.containsKey('logs') ||
+            !backup.containsKey('settings')) {
           throw Exception('Invalid backup format: missing required sections');
         }
 
@@ -78,12 +82,16 @@ class BackupService {
         final settings = backup['settings'];
 
         if (habits is! List || logs is! List || settings is! List) {
-          throw Exception('Invalid backup format: data sections must be arrays');
+          throw Exception(
+            'Invalid backup format: data sections must be arrays',
+          );
         }
 
         final validHabits = habits.whereType<Map<String, dynamic>>().toList();
         final validLogs = logs.whereType<Map<String, dynamic>>().toList();
-        final validSettings = settings.whereType<Map<String, dynamic>>().toList();
+        final validSettings = settings
+            .whereType<Map<String, dynamic>>()
+            .toList();
 
         final db = await dbHelper.database;
 

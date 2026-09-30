@@ -14,13 +14,16 @@ void main() {
     createdAt: DateTime(2023, 1, 1),
   );
 
-  testWidgets('HabitCard displays habit name and description', (WidgetTester tester) async {
+  testWidgets('HabitCard displays habit name and description', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
           body: HabitCard(
             habit: testHabit,
             isCompleted: false,
+            logs: const [],
             onMobilePressed: () {},
             onComplete: () {},
             onEdit: () {},
@@ -35,7 +38,9 @@ void main() {
     expect(find.text('Description'), findsOneWidget);
   });
 
-  testWidgets('HabitCard triggers onComplete when circle icon is tapped', (WidgetTester tester) async {
+  testWidgets('HabitCard triggers onComplete when circle icon is tapped', (
+    WidgetTester tester,
+  ) async {
     bool completed = false;
     await tester.pumpWidget(
       MaterialApp(
@@ -43,6 +48,7 @@ void main() {
           body: HabitCard(
             habit: testHabit,
             isCompleted: false,
+            logs: const [],
             onMobilePressed: () {},
             onComplete: () => completed = true,
             onEdit: () {},

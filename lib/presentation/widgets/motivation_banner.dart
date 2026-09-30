@@ -18,7 +18,11 @@ class MotivationBanner extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.lightbulb_outline, color: Theme.of(context).colorScheme.primary, size: 20),
+              Icon(
+                Icons.lightbulb_outline,
+                color: Theme.of(context).colorScheme.primary,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               Text(
                 "DAILY INSIGHT",
@@ -47,7 +51,7 @@ class MotivationBanner extends StatelessWidget {
             child: Text(
               "- ${quote.author}",
               style: TextStyle(
-                color: Colors.white.withOpacity(0.6),
+                color: Colors.white.withValues(alpha: 0.6),
                 fontSize: 12,
               ),
             ),

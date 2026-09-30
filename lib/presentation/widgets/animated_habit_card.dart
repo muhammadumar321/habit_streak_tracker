@@ -31,7 +31,8 @@ class AnimatedHabitCard extends StatefulWidget {
   State<AnimatedHabitCard> createState() => _AnimatedHabitCardState();
 }
 
-class _AnimatedHabitCardState extends State<AnimatedHabitCard> with SingleTickerProviderStateMixin {
+class _AnimatedHabitCardState extends State<AnimatedHabitCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -49,13 +50,13 @@ class _AnimatedHabitCardState extends State<AnimatedHabitCard> with SingleTicker
       curve: const Interval(0.4, 1.0, curve: Curves.easeIn),
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.2),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.4, 1.0, curve: Curves.easeOutCubic),
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.4, 1.0, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _controller.forward();
   }

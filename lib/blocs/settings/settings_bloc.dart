@@ -14,7 +14,10 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<UpdateThemeMode>(_onUpdateThemeMode);
   }
 
-  Future<void> _onLoadSettings(LoadSettings event, Emitter<SettingsState> emit) async {
+  Future<void> _onLoadSettings(
+    LoadSettings event,
+    Emitter<SettingsState> emit,
+  ) async {
     try {
       final setting = await repository.getSetting(keyThemeMode);
       if (setting != null) {
@@ -26,9 +29,14 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     }
   }
 
-  Future<void> _onUpdateThemeMode(UpdateThemeMode event, Emitter<SettingsState> emit) async {
+  Future<void> _onUpdateThemeMode(
+    UpdateThemeMode event,
+    Emitter<SettingsState> emit,
+  ) async {
     try {
-      await repository.saveSetting(UserSetting(key: keyThemeMode, value: event.themeMode.toString()));
+      await repository.saveSetting(
+        UserSetting(key: keyThemeMode, value: event.themeMode.toString()),
+      );
       emit(state.copyWith(themeMode: event.themeMode));
     } catch (_) {
       // Handle error
